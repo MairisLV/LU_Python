@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Database</title>
+</head>
+<body>
+    <h2>Registered users</h2>
+    <ul>
+        {% for user in registered_user %}
+        <li>
+            User-ID: {{user.id}}<br>
+            Name: <strong>{{ user.username }}</strong> <br>
+            Email: {{ user.email }} <br>
+           
+        </li><br>
+        {% endfor %}
+    </ul>
+</body>
+</html>
