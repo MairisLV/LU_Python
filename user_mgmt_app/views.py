@@ -1,114 +1,58 @@
 from django.shortcuts import render
+from django.urls import reverse_lazy
 from user_mgmt_app.models import Registered_users
+from user_mgmt_app.forms import RegisterForm
 from django.http import HttpResponse
+from django.views.generic import ListView, View, FormView, DetailView, UpdateView, DeleteView
+
 # Create your views here.
 
+class index_listview(ListView):
+    model = Registered_users
+    template_name = 'index.html'
 
-def index(request):
-    
-    registered_users = Registered_users.objects.all()
+class add_user_form(FormView):
+    form_class = RegisterForm
+    template_name = 'add_user.html'
+    success_url = '/'
 
-    context = {
+    def form_valid(self, form):
+        form.save()
+
+        return super().form_valid(form)
         
-        'registered_user': registered_users,
+class get_user_DetailView(DetailView):
 
-    }
-
-    return render(
-        template_name='index.html',
-        request=request,
-        context=context,
-    )
-
-def add_user(request):
-    if request.method == 'POST':
-
-        register_user = Registered_users(
-            username=request.POST["username"],
-            email=request.POST["email"],
-        )
-
-        register_user.save()
-
-        context = {
-            'user_id': register_user.id,
-            'username': register_user.username,
-            'email': register_user.email,
-            'action': 'added',
-            
-        }
-
-        return render(
-            template_name='details_page.html',
-            request=request,
-            context=context,
-        )
-
-    return render(
-        template_name='add_user.html',
-        request=request,
-        context={},
-    )
-
-def get_user(request, user_id=0):
-    
-    if user_id != 0:
-        entry = {'entry': Registered_users.objects.get(pk=user_id)}
+    model = Registered_users
+    template_name = 'get_user.html'
         
-        return render(
-            template_name='get_user.html',
-            request=request,
-            context=entry
-        )
+class edit_user_UpdateView(UpdateView):
+    model = Registered_users
+    fields = ['username', 'email']
+    template_name = 'edit_user.html'
+    success_url = '/'
 
-    return HttpResponse('<h2>Please fill in the user ID in the url to see information about the user!</h2>')
+class delete_user_DeleteView(DeleteView):
+    model = Registered_users
+    template_name = 'confirm_delete.html'
+    success_url = '/'
 
-def edit_user(request, user_id=0):
-    if user_id != 0:
-        if request.method == 'POST':
-            entry = Registered_users.objects.get(pk=user_id)
-            
-            if request.POST['username'] != '': entry.username = request.POST['username']
-            if request.POST['email'] != '': entry.email = request.POST['email']
-
-            entry.save()
-
-            context = {
-            'user_id': entry.id,
-            'username': entry.username,
-            'email': entry.email,
-            'action': 'edited',
-                }
-
-            return render(
-            template_name = 'details_page.html',
-            request = request,
-            context = context, 
-             )
-
-        return render(
-            template_name='edit_user.html',
-            request=request,
-            )
-
-    return HttpResponse('<h2>Please fill in the user ID in the url to edit the information about the user!</h2>')
-
-def delete_user(request, user_id=0):
-    if user_id != 0:
+# def delete_user(request, user_id=0):
+#     if user_id != 0:
         
-        entry = Registered_users.objects.get(pk=user_id)
+#         entry = Registered_users.objects.get(pk=user_id)
 
-        context = { 
-            'user_id': user_id,
-            'action': 'DELETED',
-                }
+#         context = { 
+#             'user_id': user_id,
+#             'action': 'DELETED',
+#                 }
 
-        entry.delete()
+#         entry.delete()
     
-        return render(
-            template_name='delete_user.html',
-            request=request,
-            context=context
-        )
+#         return render(
+#             template_name='delete_user.html',
+#             request=request,
+#             context=context
+#         )
 
-    return HttpResponse('<h2>Please fill in the user ID in the url to DELETE the user!</h2>')
+#     return HttpResponse('<h2>Please fill in the user ID in the url to DELETE the user!</h2>')

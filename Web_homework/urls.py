@@ -18,13 +18,10 @@ from django.urls import path
 from user_mgmt_app import views
 
 urlpatterns = [
-    path('', views.index),
-    path('add_user/', views.add_user),
-    path('edit_user/<int:user_id>/', views.edit_user),
-    path('edit_user/', views.edit_user),
-    path('get_user/<int:user_id>/', views.get_user),
-    path('get_user/', views.get_user),
-    path('delete_user/<int:user_id>/',views.delete_user),
-    path('delete_user/',views.delete_user),
+    path('', views.index_listview.as_view()),
+    path('edit_user/<int:pk>/', views.edit_user_UpdateView.as_view(), name='edit-user'),
+    path('get_user/<int:pk>/', views.get_user_DetailView.as_view(), name='user-details'),
+    path('delete_user/<int:pk>/',views.delete_user_DeleteView.as_view(), name='delete-user'),
+    path('add_user/', views.add_user_form.as_view()),
     path('admin/', admin.site.urls),
 ]
